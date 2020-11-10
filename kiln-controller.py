@@ -53,7 +53,7 @@ def handle_api():
 
         # start at a specific minute in the schedule
         # for restarting and skipping over early parts of a schedule
-        startat = 0;      
+        startat = 0;
         if 'startat' in bottle.request.json:
             startat = bottle.request.json['startat']
 
@@ -251,7 +251,7 @@ def get_config():
         "time_scale_slope": config.time_scale_slope,
         "time_scale_profile": config.time_scale_profile,
         "kwh_rate": config.kwh_rate,
-        "currency_type": config.currency_type})    
+        "currency_type": config.currency_type})
 
 
 def main():
