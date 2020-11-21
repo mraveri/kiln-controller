@@ -1,3 +1,6 @@
+"""
+This application only monitors the kiln without controlling it
+"""
 #!/usr/bin/env python
 
 import os
@@ -8,7 +11,6 @@ import json
 import bottle
 import gevent
 import geventwebsocket
-#from bottle import post, get
 from gevent.pywsgi import WSGIServer
 from geventwebsocket.handler import WebSocketHandler
 
@@ -23,23 +25,25 @@ except:
     exit(1)
 
 logging.basicConfig(level=config.log_level, format=config.log_format)
-log = logging.getLogger("kiln-controller")
-log.info("Starting kiln controller")
+log = logging.getLogger("kiln-monitor")
+log.info("Starting kiln monitor")
 
 script_dir = os.path.dirname(os.path.realpath(__file__))
 sys.path.insert(0, script_dir + '/lib/')
 profile_path = os.path.join(script_dir, "storage", "profiles")
+history_path = os.path.join(script_dir, "storage", "history")
 
 from oven import Oven, Profile
-from ovenWatcher import OvenWatcher
+from ovenMonitor import OvenMonitor
 
 app = bottle.Bottle()
 oven = Oven()
-ovenWatcher = OvenWatcher(oven)
+ovenMonitor = OvenMonitor(oven)
+
 
 @app.route('/')
 def index():
-    return bottle.redirect('/picoreflow/index.html')
+    return bottle.redirect('/picoreflow/index_monitor.html')
 
 @app.post('/api')
 def handle_api():
@@ -66,7 +70,8 @@ def handle_api():
         profile_json = json.dumps(profile)
         profile = Profile(profile_json)
         oven.run_profile(profile,startat=startat)
-        ovenWatcher.record(profile)
+        ovenMonitor.record(profile)
+
 
     if bottle.request.json['cmd'] == 'stop':
         log.info("api stop command received")
@@ -115,11 +120,14 @@ def handle_control():
             if msgdict.get("cmd") == "RUN":
                 log.info("RUN command received")
                 profile_obj = msgdict.get('profile')
+                """
+                profile_obj = {'type': 'profile', 'data': [[0, 0], [3600, 0]], 'name': 'monitor'}
+                """
                 if profile_obj:
                     profile_json = json.dumps(profile_obj)
                     profile = Profile(profile_json)
                 oven.run_profile(profile)
-                ovenWatcher.record(profile)
+                ovenMonitor.record(profile)
             elif msgdict.get("cmd") == "SIMULATE":
                 log.info("SIMULATE command received")
                 #profile_obj = msgdict.get('profile')
@@ -127,13 +135,22 @@ def handle_control():
                 #    profile_json = json.dumps(profile_obj)
                 #    profile = Profile(profile_json)
                 #simulated_oven = Oven(simulate=True, time_step=0.05)
-                #simulation_watcher = OvenWatcher(simulated_oven)
+                #simulation_watcher = OvenMonitor(simulated_oven)
                 #simulation_watcher.add_observer(wsock)
                 #simulated_oven.run_profile(profile)
                 #simulation_watcher.record(profile)
             elif msgdict.get("cmd") == "STOP":
                 log.info("Stop command received")
                 oven.abort_run()
+                # plot and send email:
+                if config.gmail_user and config.gmail_password is not None:
+                    ovenMonitor.send_email_report(history_path, config.sender_name,
+                                                  config.gmail_user,
+                                                  config.destination_address,
+                                                  config.gmail_password)
+                else:
+                    ovenMonitor.save_record_to_file(history_path)
+                    
         except WebSocketError:
             break
     log.info("websocket (control) closed")
@@ -201,7 +218,7 @@ def handle_config():
 @app.route('/status')
 def handle_status():
     wsock = get_websocket_from_request()
-    ovenWatcher.add_observer(wsock)
+    ovenMonitor.add_observer(wsock)
     log.info("websocket (status) opened")
     while True:
         try:
@@ -210,6 +227,10 @@ def handle_status():
         except WebSocketError:
             break
     log.info("websocket (status) closed")
+
+
+###############################################################################
+# Profile handling:
 
 
 def get_profiles():
@@ -237,6 +258,7 @@ def save_profile(profile, force=False):
     log.info("Wrote %s" % filepath)
     return True
 
+
 def delete_profile(profile):
     profile_json = json.dumps(profile)
     filename = profile['name']+".json"
@@ -252,6 +274,9 @@ def get_config():
         "time_scale_profile": config.time_scale_profile,
         "kwh_rate": config.kwh_rate,
         "currency_type": config.currency_type})
+
+###############################################################################
+# Main functions and run
 
 
 def main():

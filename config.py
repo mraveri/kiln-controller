@@ -1,4 +1,5 @@
 import logging
+import os
 
 ########################################################################
 #
@@ -102,3 +103,36 @@ warning_temp_high = 5
 # set set this offset to -4 to compensate.  This probably means you have a
 # cheap thermocouple.  Invest in a better thermocouple.
 thermocouple_offset=0
+
+########################################################################
+#
+#   Email settings:
+here = os.path.dirname(os.path.abspath(__file__))
+
+if os.path.isfile(here+'/credentials.txt'):
+    with open(here+'/credentials.txt', 'r') as file:
+        cred = file.read()
+    split_cred = cred.split('\n')
+    gmail_user = split_cred[0]
+    gmail_password = split_cred[1]
+    sender_name = split_cred[2]
+else:
+    print('No email credentials file found.')
+    print('Create the file:', here+'/credentials.txt')
+    print('With your gmail email and password to be able to send emails')
+    print('First line should be gmail email address')
+    print('Second line should be gmail email password')
+    print('Third line should be the human name that sends the email')
+    print('We suggest creating a dummy gmail address for this.')
+    gmail_user = None
+    gmail_password = None
+
+if os.path.isfile(here+'/broadcast_list.txt'):
+    with open(here+'/broadcast_list.txt', 'r') as file:
+        broadcast_list = file.read()
+    destination_address = broadcast_list.split('\n')
+else:
+    print('No email broadcast file found.')
+    print('Create the file:', here+'/broadcast_list.txt')
+    print('With the email address that should receive the email.')
+    destination_address = None

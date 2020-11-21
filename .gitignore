@@ -3,8 +3,11 @@
 \#*
 .#*
 *.swp
-.DStore/
 thumbs.db
 #storage/profiles
 #config.py
 .idea/*
+.DS_Store
+credentials.txt
+broadcast_list.txt
+*.pdf
