@@ -12,7 +12,7 @@ import bottle
 import gevent
 import geventwebsocket
 from gevent.pywsgi import WSGIServer
-from geventwebsocket.handler import WebSocketHandler
+from geventwebsocket.handler import WebSocketHandler, WebSocketError
 
 
 try:
@@ -150,7 +150,7 @@ def handle_control():
                                                   config.gmail_password)
                 else:
                     ovenMonitor.save_record_to_file(history_path)
-                    
+
         except WebSocketError:
             break
     log.info("websocket (control) closed")
