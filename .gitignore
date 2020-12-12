@@ -11,3 +11,4 @@ thumbs.db
 credentials.txt
 broadcast_list.txt
 *.pdf
+venv
