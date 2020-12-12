@@ -39,8 +39,10 @@ from ovenMonitor import OvenMonitor
 
 app = bottle.Bottle()
 oven = Oven()
-ovenMonitor = OvenMonitor(oven)
 
+# prepare settings and start monitor:
+analysis_settings = {'smoothing_scale': config.smoothing_scale}
+ovenMonitor = OvenMonitor(oven, analysis_settings=analysis_settings)
 
 @app.route('/')
 def index():
@@ -121,14 +123,13 @@ def handle_control():
             if msgdict.get("cmd") == "RUN":
                 log.info("RUN command received")
                 profile_obj = msgdict.get('profile')
-                """
-                profile_obj = {'type': 'profile', 'data': [[0, 0], [3600, 0]], 'name': 'monitor'}
-                """
+                emails = msgdict.get('mailto', '')
+                emails = emails.replace(' ', '').split(',')
                 if profile_obj:
                     profile_json = json.dumps(profile_obj)
                     profile = Profile(profile_json)
                 oven.run_profile(profile)
-                ovenMonitor.record(profile)
+                ovenMonitor.record(profile, emails)
             elif msgdict.get("cmd") == "SIMULATE":
                 log.info("SIMULATE command received")
                 #profile_obj = msgdict.get('profile')
@@ -144,15 +145,19 @@ def handle_control():
                 log.info("Stop command received")
                 oven.abort_run()
                 # plot and send email:
-                if config.gmail_user and config.gmail_password is not None:
-                    ovenMonitor.send_email_report(history_path, config.sender_name,
+                if config.gmail_user and \
+                   config.gmail_password is not None and \
+                   len(ovenMonitor.email_destination) > 1:
+                    ovenMonitor.send_email_report(history_path,
+                                                  config.sender_name,
                                                   config.gmail_user,
-                                                  config.destination_address,
                                                   config.gmail_password)
                 else:
                     ovenMonitor.save_record_to_file(history_path)
 
         except WebSocketError:
+            break
+        except TypeError:
             break
     log.info("websocket (control) closed")
 

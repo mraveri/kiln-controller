@@ -106,6 +106,13 @@ thermocouple_offset=0
 
 ########################################################################
 #
+#   Analysis settings:
+
+# smoothing scale for plots, in hours. Default is 1 minute
+smoothing_scale = 1./60.
+
+########################################################################
+#
 #   Email settings:
 here = os.path.dirname(os.path.abspath(__file__))
 
@@ -126,13 +133,3 @@ else:
     print('We suggest creating a dummy gmail address for this.')
     gmail_user = None
     gmail_password = None
-
-if os.path.isfile(here+'/broadcast_list.txt'):
-    with open(here+'/broadcast_list.txt', 'r') as file:
-        broadcast_list = file.read()
-    destination_address = broadcast_list.split('\n')
-else:
-    print('No email broadcast file found.')
-    print('Create the file:', here+'/broadcast_list.txt')
-    print('With the email address that should receive the email.')
-    destination_address = None
