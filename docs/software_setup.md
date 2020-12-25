@@ -121,7 +121,7 @@ And we disable the possibility of logging in without the password. This prevents
 
 First we download the software from github:
 
-    cd
+    cd $HOME
     git clone https://github.com/mraveri/kiln-controller.git
     cd kiln-controller
 
@@ -129,13 +129,13 @@ If you want to reinstall the software just remove the kiln-controller folder and
 
 Then we use the installation script in the script directory:
 
-    ./scrips/install
+    ./script/install
 
 This will go on for a while. You can check the script content to see what this is doing.
 
 Then we need to activate the three leds by doing:
 
-    ./scrips/activate_led
+    ./script/activate_led
 
 that needs to be run just once.
 
