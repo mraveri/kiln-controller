@@ -1,0 +1,25 @@
+#!/bin/bash
+echo 'Installing kiln-controller and all dependencies'
+
+# get the path of the script:
+SCRIPT_PATH="`dirname \"$0\"`"                  # relative
+SCRIPT_PATH="`( cd \"$SCRIPT_PATH\" && pwd )`"  # absolutized and normalized
+if [ -z "$SCRIPT_PATH" ] ; then
+  exit 1
+fi
+cd $SCRIPT_PATH
+cd ..
+
+# install python:
+sudo apt-get install python3-pip python3-dev python-dev python3-virtualenv libevent-dev virtualenv
+
+# create and go to the virtual environment:
+virtualenv -p python3 venv
+source venv/bin/activate
+
+# install all python packages we need:
+pip install --upgrade setuptools
+pip install -r requirements.txt
+
+# create the credential file:
+touch credentials.txt

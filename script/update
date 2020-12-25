@@ -1,0 +1,14 @@
+#!/bin/bash
+echo 'Updating kiln-controller'
+
+# get the path of the script:
+SCRIPT_PATH="`dirname \"$0\"`"                  # relative
+SCRIPT_PATH="`( cd \"$SCRIPT_PATH\" && pwd )`"  # absolutized and normalized
+if [ -z "$SCRIPT_PATH" ] ; then
+  exit 1
+fi
+cd $SCRIPT_PATH
+cd ..
+
+# pull from github repository:
+git pull

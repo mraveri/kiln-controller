@@ -1,4 +1,0 @@
-#!/bin/bash
-echo 'Updating kiln-controller'
-# pull from github repository:
-git pull
