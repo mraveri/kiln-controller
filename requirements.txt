@@ -1,7 +1,7 @@
 setuptools
 greenlet
-bottle
-gevent
+bottle==0.12.18
+gevent==20.9.0
 gevent-websocket
 RPi.GPIO
 Adafruit-MAX31855
