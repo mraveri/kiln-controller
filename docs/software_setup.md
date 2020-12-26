@@ -74,7 +74,8 @@ Now we run a full system update:
     sudo apt-get update
     sudo apt-get full-upgrade -y
 
-Leave the pi finish. If connection drops in this stage it is likely that you have to restart the whole installation as a failure in updating likely corrupts the system.
+Leave the pi finish, it might take a while.
+If connection drops in this stage it is likely that you have to restart the whole installation as a failure in updating likely corrupts the system.
 
 Now we run the config script:
 
@@ -90,13 +91,23 @@ If you want to change the network name of the pi from the default raspberrypi yo
 
     sudo nano /etc/hostname
 
+then change raspberrypi to the name you chose in the file:
+
+    sudo nano /etc/hosts
+
+Now reboot with:
+
+    sudo reboot
+
+Notice that when you want to reconnect you have to use the new hostname.
+
 **Setting up power-led:**
 
+The serial port power led should work right away after the reboot.
 
+If it does not make sure that in the file /boot/config.txt you have enable_uart=1
 
-
-
-
+After changing that reboot and the led should light up.
 
 **Setting up security:**
 

@@ -30,7 +30,7 @@ These go as in the main readme with the addition of status leds and camera for m
 9. 3 led of possibly different color, 3 resistors (what value)
 10. misc cables to solder
 
-### Other things you might need:
+### Other things you might need:x
 
 But not necessarily.
 
@@ -38,3 +38,33 @@ But not necessarily.
 2. Screwdrivers of different sizes (most noticeably M1, M2, M3 that are less common)
 3. 3D printer for enclosure
 4. a wi-fi connection (although probably not really necessary)
+
+
+## Mounting
+
+
+Soldering work
+
+Thermocouple reader to GPIO
+
+
+### External status leds:
+
+The pi puts out about 3.3V from its ports. Depending on the leds you have use
+an online tool like:
+
+https://ohmslawcalculator.com/led-resistor-calculator
+
+to dimension the resistence that goes with the led.
+
+**Power led**
+
+Power led to serial
+GPIO14 pin 8, GND pin 6
+
+
+
+Two led to GPIO
+
+GPIO12 pin 32, GND pin 30
+GPIO16 pin 36, GND pin 34
