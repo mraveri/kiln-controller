@@ -140,15 +140,9 @@ If you want to reinstall the software just remove the kiln-controller folder and
 
 Then we use the installation script in the script directory:
 
-    ./script/install
+    ./script/install_on_pi
 
 This will go on for a while. You can check the script content to see what this is doing.
-
-Then we need to activate the three leds by doing:
-
-    ./script/activate_led
-
-that needs to be run just once.
 
 To set up email notifications you should see that the installer has created a file called credentials.txt.
 Open it and fill three lines with the email address that will send emails, the password and its name. I use a dummy gmail account and my credential file looks like this:
@@ -156,6 +150,8 @@ Open it and fill three lines with the email address that will send emails, the p
     name@gmail.com
     password
     Name Sending Email
+
+Then reboot the pi.
 
 Now we want the monitor to fire up when we start the raspberry sop we give:
 
