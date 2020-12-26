@@ -119,10 +119,13 @@ here = os.path.dirname(os.path.abspath(__file__))
 if os.path.isfile(here+'/credentials.txt'):
     with open(here+'/credentials.txt', 'r') as file:
         cred = file.read()
-    split_cred = cred.split('\n')
-    gmail_user = split_cred[0]
-    gmail_password = split_cred[1]
-    sender_name = split_cred[2]
+    try:
+        split_cred = cred.split('\n')
+        gmail_user = split_cred[0]
+        gmail_password = split_cred[1]
+        sender_name = split_cred[2]
+    except IndexError:
+        print('Could not import credential file.')
 else:
     print('No email credentials file found.')
     print('Create the file:', here+'/credentials.txt')
@@ -133,3 +136,4 @@ else:
     print('We suggest creating a dummy gmail address for this.')
     gmail_user = None
     gmail_password = None
+    sender_name = None
