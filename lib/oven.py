@@ -52,6 +52,7 @@ class Oven (threading.Thread):
         self.daemon = True
         self.simulate = simulate
         self.time_step = time_step
+        self.temp_sensor = None
         self.reset()
         if simulate:
             self.temp_sensor = TempSensorSimulate(self,
@@ -75,7 +76,8 @@ class Oven (threading.Thread):
         self.state = Oven.STATE_IDLE
         self.set_heat(False)
         self.pid = PID(ki=config.pid_ki, kd=config.pid_kd, kp=config.pid_kp)
-        self.temp_sensor.active = False
+        if self.temp_sensor is not None:
+            self.temp_sensor.active = False
 
     def run_profile(self, profile, startat=0):
         log.info("Running schedule %s" % profile.name)
