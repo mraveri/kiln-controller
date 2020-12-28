@@ -153,16 +153,16 @@ Open it and fill three lines with the email address that will send emails, the p
 
 Then reboot the pi.
 
-Now turn on the wi-fi status led by giving:
+Now turn on wi-fi management with led by giving:
 
-    sudo ./scrips/wifi_led
+    sudo ./script/wifi_setup
 
-Now we want the monitor to fire up when we start the raspberry sop we give:
+And since we want the monitor to run at startup we give:
 
-    ./scrips/start-on-boot
+    sudo ./script/start-monitor-on-boot
 
-**Setting up wi-fi:**
-
+These are instructions for deployment, if you want to develop the code refer to the
+standard instructions.
 
 ## Network set-up
 

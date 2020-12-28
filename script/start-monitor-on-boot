@@ -1,3 +1,31 @@
 #!/bin/bash
-sudo cp /home/pi/kiln-controller/lib/init/kiln-monitor.service /etc/systemd/system/
+
+# get the path of the script:
+SCRIPT_PATH="`dirname \"$0\"`"                  # relative
+SCRIPT_PATH="`( cd \"$SCRIPT_PATH\" && pwd )`"  # absolutized and normalized
+if [ -z "$SCRIPT_PATH" ] ; then
+  exit 1
+fi
+cd $SCRIPT_PATH
+BASEDIR=$SCRIPT_PATH/..
+
+# write the service:
+cat <<EOF > /etc/systemd/system/kiln-monitor.service
+
+[Unit]
+Description=kiln-monitor
+After=network.target
+StartLimitIntervalSec=2
+
+[Service]
+Restart=always
+ExecStart=$BASEDIR/venv/bin/python $BASEDIR/kiln-monitor.py
+
+[Install]
+WantedBy=multi-user.target
+
+EOF
+
+# activate the service:
+sudo systemctl start kiln-monitor
 sudo systemctl enable kiln-monitor
