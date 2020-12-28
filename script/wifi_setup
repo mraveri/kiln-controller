@@ -19,7 +19,6 @@ StartLimitIntervalSec=2
 
 [Service]
 Type=simple
-Restart=always
 User=root
 ExecStart=/usr/bin/bash $SCRIPT_PATH/wifi_check
 
