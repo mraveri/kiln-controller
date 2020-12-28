@@ -1,16 +1,11 @@
 #!/bin/bash
 
-# light led while Wi-Fi is connected
-if [[ ! -d /sys/class/gpio/gpio32/ ]]
-then
-  echo 32 > /sys/class/gpio/export
-  echo out > /sys/class/gpio/gpio32/direction
+# get the path of the script:
+SCRIPT_PATH="`dirname \"$0\"`"                  # relative
+SCRIPT_PATH="`( cd \"$SCRIPT_PATH\" && pwd )`"  # absolutized and normalized
+if [ -z "$SCRIPT_PATH" ] ; then
+  exit 1
 fi
-case "$reason" in
-CARRIER)
-  echo 1 > /sys/class/gpio/gpio32/value
-   ;;
- NOCARRIER)
-  echo 0 > /sys/class/gpio/gpio32/value
-   ;;
-esac
+
+# now copy the web hook to the position it has to have:
+cp $SCRIPT_PATH/05-wifiled /lib/dhcpcd/dhcpcd-hooks/
