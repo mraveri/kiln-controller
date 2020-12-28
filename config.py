@@ -52,7 +52,6 @@ spi_sensor_chip_id = 0
 ### value is used.
 sensor_time_wait = 2
 
-
 ########################################################################
 #
 #   PID parameters
@@ -61,28 +60,32 @@ pid_kp = 25  # Proportional
 pid_ki = 1088  # Integration
 pid_kd = 217  # Derivative was 217
 
+########################################################################
+#
+#   Temperature reading led:
+
+gpio_led = 12
 
 ########################################################################
 #
 #   Simulation parameters
 
-sim_t_env      = 25.0   # deg C
-sim_c_heat     = 100.0  # J/K  heat capacity of heat element
-sim_c_oven     = 5000.0 # J/K  heat capacity of oven
-sim_p_heat     = 5450.0 # W    heating power of oven
-sim_R_o_nocool = 1.0    # K/W  thermal resistance oven -> environment
-sim_R_o_cool   = 0.05   # K/W  " with cooling
-sim_R_ho_noair = 0.1    # K/W  thermal resistance heat element -> oven
-sim_R_ho_air   = 0.05   # K/W  " with internal air circulation
-
+sim_t_env = 25.0  # deg C
+sim_c_heat = 100.0  # J/K  heat capacity of heat element
+sim_c_oven = 5000.0  # J/K  heat capacity of oven
+sim_p_heat = 5450.0  # W    heating power of oven
+sim_R_o_nocool = 1.0  # K/W  thermal resistance oven -> environment
+sim_R_o_cool = 0.05  # K/W  " with cooling
+sim_R_ho_noair = 0.1  # K/W  thermal resistance heat element -> oven
+sim_R_ho_air = 0.05  # K/W  " with internal air circulation
 
 ########################################################################
 #
 #   Time and Temperature parameters
 
-temp_scale          = "f" # c = Celsius | f = Fahrenheit - Unit to display
-time_scale_slope    = "h" # s = Seconds | m = Minutes | h = Hours - Slope displayed in temp_scale per time_scale_slope
-time_scale_profile  = "m" # s = Seconds | m = Minutes | h = Hours - Enter and view target time in time_scale_profile
+temp_scale = "f"  # c = Celsius | f = Fahrenheit - Unit to display
+time_scale_slope = "h"  # s = Seconds | m = Minutes | h = Hours - Slope displayed in temp_scale per time_scale_slope
+time_scale_profile = "m"  # s = Seconds | m = Minutes | h = Hours - Enter and view target time in time_scale_profile
 
 # emergency shutoff the kiln if this temp is reached.
 # when solid state relays fail, they usually fail closed.  this means your
@@ -102,7 +105,7 @@ warning_temp_high = 5
 # If you put your thermocouple in ice water and it reads 36F, you can
 # set set this offset to -4 to compensate.  This probably means you have a
 # cheap thermocouple.  Invest in a better thermocouple.
-thermocouple_offset=0
+thermocouple_offset = 0
 
 ########################################################################
 #

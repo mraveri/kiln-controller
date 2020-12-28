@@ -18,8 +18,7 @@ After=network.target
 StartLimitIntervalSec=2
 
 [Service]
-Type=simple
-User=root
+Restart=always
 ExecStart=/usr/bin/bash $SCRIPT_PATH/wifi_check
 
 [Install]
