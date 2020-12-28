@@ -128,7 +128,7 @@ if os.path.isfile(here+'/credentials.txt'):
         gmail_password = split_cred[1]
         sender_name = split_cred[2]
     except IndexError:
-        print('Could not import credential file.')
+        print('Could not import credentials file.')
         gmail_user = None
         gmail_password = None
         sender_name = None
