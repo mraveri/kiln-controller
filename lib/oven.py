@@ -36,15 +36,13 @@ try:
     GPIO.setmode(GPIO.BCM)
     GPIO.setwarnings(False)
     GPIO.setup(config.gpio_heat, GPIO.OUT)
+    # add led blinking when reading temperature:
+    GPIO.setup(config.gpio_led, GPIO.OUT)
     gpio_available = True
 except ImportError:
     msg = "Could not initialize GPIOs, oven operation will only be simulated!"
     log.warning(msg)
     gpio_available = False
-
-# add led blinking when reading temperature:
-
-
 
 class Oven (threading.Thread):
     STATE_IDLE = "IDLE"
@@ -176,7 +174,6 @@ class Oven (threading.Thread):
                else:
                  GPIO.output(config.gpio_heat, GPIO.LOW)
 
-
     def get_state(self):
         state = {
             'runtime': self.runtime,
@@ -203,16 +200,16 @@ class TempSensorReal(TempSensor):
         if config.max6675:
             log.info("init MAX6675")
             self.thermocouple = MAX6675(config.gpio_sensor_cs,
-                                     config.gpio_sensor_clock,
-                                     config.gpio_sensor_data,
-                                     config.temp_scale)
+                                        config.gpio_sensor_clock,
+                                        config.gpio_sensor_data,
+                                        config.temp_scale)
 
         if config.max31855:
             log.info("init MAX31855")
             self.thermocouple = MAX31855(config.gpio_sensor_cs,
-                                     config.gpio_sensor_clock,
-                                     config.gpio_sensor_data,
-                                     config.temp_scale)
+                                         config.gpio_sensor_clock,
+                                         config.gpio_sensor_data,
+                                         config.temp_scale)
 
         if config.max31855spi:
             log.info("init MAX31855-spi")
@@ -224,16 +221,19 @@ class TempSensorReal(TempSensor):
             maxtries = 5
             sleeptime = self.time_step / float(maxtries)
             maxtemp = 0
-            for x in range(0,maxtries):
+            for x in range(0, maxtries):
                 try:
                     temp = self.thermocouple.get()
                 except Exception:
                     log.exception("problem reading temp")
                 if temp > maxtemp:
                     maxtemp = temp
+                if x == 0:
+                    GPIO.output(config.gpio_led, GPIO.HIGH)
                 time.sleep(sleeptime)
+                if x == 0:
+                    GPIO.output(config.gpio_led, GPIO.LOW)
             self.temperature = maxtemp
-            #time.sleep(self.time_step)
 
 
 class TempSensorSimulate(TempSensor):
@@ -273,7 +273,10 @@ class TempSensorSimulate(TempSensor):
             log.debug("energy sim: -> %dW heater: %.0f -> %dW oven: %.0f -> %dW env" % (int(p_heat * self.oven.heat), t_h, int(p_ho), t, int(p_env)))
             self.temperature = t
 
-            time.sleep(self.sleep_time)
+            GPIO.output(config.gpio_led, GPIO.HIGH)
+            time.sleep(self.sleep_time / 2)
+            GPIO.output(config.gpio_led, GPIO.LOW)
+            time.sleep(self.sleep_time / 2)
 
 
 class Profile():
