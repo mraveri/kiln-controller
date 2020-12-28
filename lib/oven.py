@@ -36,8 +36,8 @@ try:
     GPIO.setmode(GPIO.BCM)
     GPIO.setwarnings(False)
     GPIO.setup(config.gpio_heat, GPIO.OUT)
-    # add led blinking when reading temperature:
-    GPIO.setup(config.gpio_led, GPIO.OUT)
+    # add led blinking when reading temperature, we start with IN be off:
+    GPIO.setup(config.gpio_led, GPIO.IN, initial=GPIO.LOW)
     gpio_available = True
 except ImportError:
     msg = "Could not initialize GPIOs, oven operation will only be simulated!"
@@ -76,6 +76,7 @@ class Oven (threading.Thread):
         self.state = Oven.STATE_IDLE
         self.set_heat(False)
         self.pid = PID(ki=config.pid_ki, kd=config.pid_kd, kp=config.pid_kp)
+        GPIO.setup(config.gpio_led, GPIO.IN, initial=GPIO.LOW)
 
     def run_profile(self, profile, startat=0):
         log.info("Running schedule %s" % profile.name)
@@ -84,6 +85,7 @@ class Oven (threading.Thread):
         self.state = Oven.STATE_RUNNING
         self.start_time = datetime.datetime.now()
         self.startat = startat * 60
+        GPIO.setup(config.gpio_led, GPIO.OUT, initial=GPIO.LOW)
         log.info("Starting")
 
     def abort_run(self):
