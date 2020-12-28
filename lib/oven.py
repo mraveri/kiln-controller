@@ -36,6 +36,7 @@ try:
     GPIO.setmode(GPIO.BCM)
     GPIO.setwarnings(False)
     GPIO.setup(config.gpio_heat, GPIO.OUT)
+    GPIO.setup(config.gpio_led, GPIO.OUT, initial=GPIO.LOW)
     gpio_available = True
 except ImportError:
     msg = "Could not initialize GPIOs, oven operation will only be simulated!"
@@ -74,7 +75,7 @@ class Oven (threading.Thread):
         self.state = Oven.STATE_IDLE
         self.set_heat(False)
         self.pid = PID(ki=config.pid_ki, kd=config.pid_kd, kp=config.pid_kp)
-        GPIO.cleanup(config.gpio_led)
+        self.temp_sensor.active = False
 
     def run_profile(self, profile, startat=0):
         log.info("Running schedule %s" % profile.name)
@@ -83,7 +84,7 @@ class Oven (threading.Thread):
         self.state = Oven.STATE_RUNNING
         self.start_time = datetime.datetime.now()
         self.startat = startat * 60
-        GPIO.setup(config.gpio_led, GPIO.OUT, initial=GPIO.LOW)
+        self.temp_sensor.active = True
         log.info("Starting")
 
     def abort_run(self):
@@ -192,6 +193,7 @@ class TempSensor(threading.Thread):
         self.daemon = True
         self.temperature = 0
         self.time_step = time_step
+        self.active = False
 
 
 class TempSensorReal(TempSensor):
@@ -228,10 +230,10 @@ class TempSensorReal(TempSensor):
                     log.exception("problem reading temp")
                 if temp > maxtemp:
                     maxtemp = temp
-                if x == 0:
+                if x == 0 and self.active:
                     GPIO.output(config.gpio_led, GPIO.HIGH)
                 time.sleep(sleeptime)
-                if x == 0:
+                if x == 0 and self.active:
                     GPIO.output(config.gpio_led, GPIO.LOW)
             self.temperature = maxtemp
 
@@ -241,6 +243,7 @@ class TempSensorSimulate(TempSensor):
         TempSensor.__init__(self, time_step)
         self.oven = oven
         self.sleep_time = sleep_time
+        self.active = False
 
     def run(self):
         t_env      = config.sim_t_env
@@ -273,9 +276,11 @@ class TempSensorSimulate(TempSensor):
             log.debug("energy sim: -> %dW heater: %.0f -> %dW oven: %.0f -> %dW env" % (int(p_heat * self.oven.heat), t_h, int(p_ho), t, int(p_env)))
             self.temperature = t
 
-            GPIO.output(config.gpio_led, GPIO.HIGH)
+            if self.active:
+                GPIO.output(config.gpio_led, GPIO.HIGH)
             time.sleep(self.sleep_time / 2)
-            GPIO.output(config.gpio_led, GPIO.LOW)
+            if self.active:
+                GPIO.output(config.gpio_led, GPIO.LOW)
             time.sleep(self.sleep_time / 2)
 
 
