@@ -12,8 +12,8 @@ state=$(cat /sys/class/net/wlan0/operstate)
 
 # if state is up we light the led, otherwise we turn it off and try to restart Wi-Fi
 if [ $state = "up" ]; then
-  echo 1 > /sys/class/gpio/gpio27/value
+  echo 1 > /sys/class/gpio/gpio12/value
 else
-  echo 0 > /sys/class/gpio/gpio27/value
+  echo 0 > /sys/class/gpio/gpio12/value
   ip link set wlan0 up
 fi;
