@@ -1,0 +1,48 @@
+#!/bin/bash
+
+# get the path of the script:
+SCRIPT_PATH="`dirname \"$0\"`"                  # relative
+SCRIPT_PATH="`( cd \"$SCRIPT_PATH\" && pwd )`"  # absolutized and normalized
+if [ -z "$SCRIPT_PATH" ] ; then
+  exit 1
+fi
+cd $SCRIPT_PATH
+BASEDIR=$SCRIPT_PATH/..
+
+# write the service:
+cat <<EOF > /etc/systemd/system/wifi-check.service
+
+[Unit]
+Description=wifi-check
+After=network.target
+StartLimitIntervalSec=2
+
+[Service]
+Type=simple
+Restart=always
+User=root
+ExecStart=/usr/bin/bash $SCRIPT_PATH/wifi_check
+
+[Install]
+WantedBy=multi-user.target
+
+EOF
+
+# write the timer:
+cat <<EOF > /etc/systemd/system/wifi-check.timer
+
+[Unit]
+Description=Timer for how often to syncronize google drive folder
+
+[Timer]
+OnUnitInactiveSec=10s
+OnBootSec=10s
+
+[Install]
+WantedBy=timers.target
+
+EOF
+
+# activate the service:
+sudo systemctl start wifi-check
+sudo systemctl enable wifi-check
