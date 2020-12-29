@@ -145,11 +145,6 @@ def handle_control():
                 log.info("Stop command received")
                 oven.abort_run()
                 # plot and send email:
-
-                print(config.gmail_user)
-                print(config.gmail_password)
-                print(len(ovenMonitor.email_destination))
-
                 if config.gmail_user is not None and \
                    config.gmail_password is not None and \
                    len(ovenMonitor.email_destination) > 0:

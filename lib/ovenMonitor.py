@@ -215,8 +215,7 @@ class OvenMonitor(threading.Thread):
         results.append(filename+'/2_temperature_ramp.pdf')
 
         # print feedback:
-        log.debug('Produced plots', results)
-        log.debug('Run report', report)
+        log.debug('Produced plots')
         #
         return results, report
 
@@ -225,8 +224,7 @@ class OvenMonitor(threading.Thread):
         Send email report of the firing
         """
         # print feedback:
-        log.info('Sending email results to ',
-                 ', '.join(self.email_destination))
+        log.info('Sending email results')
 
         # save data out:
         record_path = self.save_record_to_file(filename)
