@@ -152,7 +152,7 @@ def handle_control():
 
                 if config.gmail_user is not None and \
                    config.gmail_password is not None and \
-                   len(ovenMonitor.email_destination) > 1:
+                   len(ovenMonitor.email_destination) > 0:
                     ovenMonitor.send_email_report(history_path,
                                                   config.sender_name,
                                                   config.gmail_user,
