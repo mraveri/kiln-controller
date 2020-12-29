@@ -143,6 +143,3 @@ else:
     gmail_user = None
     gmail_password = None
     sender_name = None
-print(gmail_user)
-print(gmail_password)
-print(sender_name)
