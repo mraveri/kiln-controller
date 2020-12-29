@@ -39,6 +39,10 @@ WantedBy=timers.target
 
 EOF
 
-# activate the service:
-sudo systemctl start wifi-check
-sudo systemctl enable wifi-check
+# start service now:
+sudo systemctl start wifi-check.service
+sudo systemctl start wifi-check.timer
+
+# on boot:
+sudo systemctl enable wifi-check.service
+sudo systemctl enable wifi-check.timer
