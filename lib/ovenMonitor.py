@@ -135,6 +135,9 @@ class OvenMonitor(threading.Thread):
         """
         Produce analysis plots and analyse the data after the fire.
         """
+        # print feedback:
+        log.info('Analyzing results')
+
         # output product:
         results = []
 
@@ -211,6 +214,9 @@ class OvenMonitor(threading.Thread):
         plt.close()
         results.append(filename+'/2_temperature_ramp.pdf')
 
+        # print feedback:
+        log.debug('Produced plots', results)
+        log.debug('Run report', report)
         #
         return results, report
 
@@ -218,6 +224,10 @@ class OvenMonitor(threading.Thread):
         """
         Send email report of the firing
         """
+        # print feedback:
+        log.info('Sending email results to ',
+                 ', '.join(self.email_destination))
+
         # save data out:
         record_path = self.save_record_to_file(filename)
         # plot files:
@@ -252,3 +262,6 @@ class OvenMonitor(threading.Thread):
         server.login(sender_user, password)
         server.send_message(msg)
         server.close()
+
+        # print feedback:
+        log.debug('Email sent')
