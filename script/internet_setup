@@ -1,0 +1,31 @@
+#!/bin/bash
+
+# get the path of the script:
+SCRIPT_PATH="`dirname \"$0\"`"                  # relative
+SCRIPT_PATH="`( cd \"$SCRIPT_PATH\" && pwd )`"  # absolutized and normalized
+if [ -z "$SCRIPT_PATH" ] ; then
+  exit 1
+fi
+cd $SCRIPT_PATH
+BASEDIR=$SCRIPT_PATH/..
+
+# write the service:
+cat <<EOF > /etc/systemd/system/internet_spawn.service
+
+[Unit]
+Description=spawn internet server
+After=network.target
+
+[Service]
+ExecStart=/usr/local/bin/lt --port 8081 --subdomain ${HOSTNAME}
+Restart=always
+RestartSec=1
+
+[Install]
+WantedBy=multi-user.target
+
+EOF
+
+# start service now:
+sudo systemctl start internet_spawn.service
+sudo systemctl enable internet_spawn.service
