@@ -5,6 +5,8 @@ import time
 import datetime
 import pickle
 import os
+import subprocess
+import re
 
 # data analysis libraries:
 import numpy as np
@@ -351,3 +353,38 @@ class OvenMonitor(threading.Thread):
 
         # print feedback:
         log.debug('Email sent')
+
+    def send_email_start(self, sender_name, sender_user, password):
+        """
+        Send email to monitor fire
+        """
+        # print feedback:
+        log.info('Sending email at beginning of fire')
+
+        # create message:
+        msg = MIMEMultipart()
+        msg['Subject'] = '[kiln report] ' + self.started.strftime('%Y/%m/%d %H:%M')
+        msg['From'] = sender_name + ' <'+sender_user+'>'
+        msg['To'] = ", ".join(self.email_destination)
+        # get the address of the server:
+        try:
+            result = subprocess.run(['journalctl', '-u', 'internet_spawn.service'], stdout=subprocess.PIPE).stdout.decode('utf-8')
+            result = [strings for strings in result.split('\n') if 'your url is:' in strings][-1]
+            name = re.search('your url is: https://(.*).loca.lt', result).group(1)
+            name = 'http://'+name+'.loca.lt'
+        except Exception as ex:
+            logging.error('internet_spawn.service does not seem to be running.')
+            logging.error(ex)
+            return
+
+        # email body:
+        msg.attach(MIMEText('Kiln monitor started, you can follow the fire at'+name+'\n'))
+        # send the email:
+        server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+        server.ehlo()
+        server.login(sender_user, password)
+        server.send_message(msg)
+        server.close()
+
+        # print feedback:
+        log.debug('Initial email sent')

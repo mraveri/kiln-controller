@@ -17,7 +17,7 @@ Description=spawn internet server
 After=network.target
 
 [Service]
-ExecStart=/usr/local/bin/lt --port 8081 --subdomain ${HOSTNAME}
+ExecStart=/usr/local/bin/lt --port 8081 --print-requests --subdomain ${HOSTNAME}
 Restart=always
 RestartSec=1
 

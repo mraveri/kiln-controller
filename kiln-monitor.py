@@ -153,6 +153,9 @@ def handle_control():
                     profile = Profile(profile_json)
                 oven.run_profile(profile)
                 ovenMonitor.record(profile, emails)
+                ovenMonitor.send_email_start(config.sender_name,
+                                             config.gmail_user,
+                                             config.gmail_password)
             elif msgdict.get("cmd") == "SIMULATE":
                 log.info("SIMULATE command received")
                 #profile_obj = msgdict.get('profile')
