@@ -65,3 +65,5 @@ def generate_salt_cipher(pwd, salt=None):
     cipher = Fernet(key)
     #
     return salt, cipher
+
+###############################################################################

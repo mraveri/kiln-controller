@@ -188,12 +188,18 @@ class OvenMonitor(threading.Thread):
 
         # now cut the data to highlight the fire regime:
         filter = temperature > unload_temperature
-        ind_min, ind_max = np.where(filter)[0][0], np.where(filter)[0][-1]
+        if np.all(np.logical_not(filter)):
+            ind_min, ind_max = 0, len(filter)-1
+        else:
+            ind_min, ind_max = np.where(filter)[0][0], np.where(filter)[0][-1]
         temperature = temperature[ind_min:ind_max+1]
         time = time[ind_min:ind_max+1]
 
         filter = np.logical_and(time[0] <= equi_time, equi_time <= time[-1])
-        ind_min, ind_max = np.where(filter)[0][0], np.where(filter)[0][-1]
+        if np.all(np.logical_not(filter)):
+            ind_min, ind_max = 0, len(filter)-1
+        else:
+            ind_min, ind_max = np.where(filter)[0][0], np.where(filter)[0][-1]
         smooth_temp = smooth_temp[ind_min:ind_max+1]
         equi_time = equi_time[ind_min:ind_max+1]
 
@@ -319,7 +325,7 @@ class OvenMonitor(threading.Thread):
         # email body:
         msg.attach(MIMEText('Raw peak temperature = '+str(round(report['max_t'], 2))+' F'+'\n' \
                    + 'Average peak temperature = '+str(round(report['max_t_smooth'], 2))+' F'+'\n' \
-                   + 'Firing duration = '+str(round(report['fire_duration'], 2))+' hours'
+                   + 'Firing duration = '+str(round(report['fire_duration'], 3))+' hours'
                             ))
         # attach plots:
         for plot in plot_files:
