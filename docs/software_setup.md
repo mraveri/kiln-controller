@@ -121,14 +121,13 @@ We follow the instructions at:
 
     https://www.raspberrypi.org/documentation/configuration/security.md
 
-We add a new user with a strong password.
-Take a note of the password and make it strong.
+Change password, take a note of the password and make it strong.
 
 Then make sudo require a password.
 
 Then we set up an ssh key login that does not require password, like https://www.raspberrypi.org/documentation/remote-access/ssh/passwordless.md#copy-your-public-key-to-your-raspberry-pi
 
-And we disable the possibility of logging in without the password. This prevents any computer that does not have the key to log in the pi.
+And we disable the possibility of logging in without the password. This prevents any computer that does not have the key to log in the pi and makes the system far more secure.
 
 ## Kiln-Monitor installation
 
@@ -161,6 +160,7 @@ Open the file and write:
     username
     password
 
+These should definitely be different from your raspberry user and password.
 Do not worry that these are human readable. The first time the monitor is used the files will be encrypted.
 
 Then reboot the pi.

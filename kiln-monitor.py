@@ -52,14 +52,11 @@ def is_authenticated_user(user, password):
     try:
         test = sha256_crypt.verify(user+password, config.key)
         # if the user correctly authenticates we decrypt the email passwords:
-        if test:
+        if test and isinstance(config.gmail_user, bytes):
             salt, cipher = utilities.generate_salt_cipher(user+password, salt=config.salt)
             config.gmail_user = cipher.decrypt(config.gmail_user).decode("utf-8")
             config.gmail_password = cipher.decrypt(config.gmail_password).decode("utf-8")
             config.sender_name = cipher.decrypt(config.sender_name).decode("utf-8")
-            print(config.gmail_user)
-            print(config.gmail_password)
-            print(config.sender_name)
         return test
     except ValueError:
         return False
@@ -123,6 +120,7 @@ def find_profile(wanted):
 
 
 @app.route('/picoreflow/:filename#.*#')
+@bottle.auth_basic(is_authenticated_user)
 def send_static(filename):
     log.debug("serving %s" % filename)
     return bottle.static_file(filename, root=os.path.join(os.path.dirname(os.path.realpath(sys.argv[0])), "public"))
