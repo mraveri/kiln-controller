@@ -120,7 +120,7 @@ def find_profile(wanted):
 
 
 @app.route('/picoreflow/:filename#.*#')
-@bottle.auth_basic(is_authenticated_user)
+##@bottle.auth_basic(is_authenticated_user)
 def send_static(filename):
     log.debug("serving %s" % filename)
     return bottle.static_file(filename, root=os.path.join(os.path.dirname(os.path.realpath(sys.argv[0])), "public"))
