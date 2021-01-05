@@ -63,13 +63,13 @@ def is_authenticated_user(user, password):
 
 
 @app.route('/')
-@bottle.auth_basic(is_authenticated_user)
+##@bottle.auth_basic(is_authenticated_user)
 def index():
     return bottle.redirect('/picoreflow/index_monitor.html')
 
 
 @app.post('/api')
-@bottle.auth_basic(is_authenticated_user)
+##@bottle.auth_basic(is_authenticated_user)
 def handle_api():
     log.info("/api is alive")
     log.info(bottle.request.json)
@@ -120,7 +120,7 @@ def find_profile(wanted):
 
 
 @app.route('/picoreflow/:filename#.*#')
-@bottle.auth_basic(is_authenticated_user)
+##@bottle.auth_basic(is_authenticated_user)
 def send_static(filename):
     log.debug("serving %s" % filename)
     return bottle.static_file(filename, root=os.path.join(os.path.dirname(os.path.realpath(sys.argv[0])), "public"))

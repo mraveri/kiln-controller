@@ -166,35 +166,39 @@ else:
 log_cred = log_cred.split('\n')
 mail_cred = mail_cred.split('\n')
 
-# if the credential file contains one line only we assume it has already be encrypted:
-if os.path.isfile(here+'/salt.txt'):
-    key = log_cred[0]
-    gmail_user = bytes(mail_cred[0], encoding='utf-8')
-    gmail_password = bytes(mail_cred[1], encoding='utf-8')
-    sender_name = bytes(mail_cred[2], encoding='utf-8')
-    with open(here+'/salt.txt', 'rb') as file:
-        salt = file.read()
-else:
-    uname = log_cred[0]
-    password = log_cred[1]
-    gmail_user = mail_cred[0]
-    gmail_password = mail_cred[1]
-    sender_name = mail_cred[2]
-    # hash uname and password:
-    key = sha256_crypt.hash(uname+password)
-    # encrypt the gmail credentials:
-    salt, cipher = utilities.generate_salt_cipher(uname+password, salt=None)
-    gmail_user = cipher.encrypt(bytes(gmail_user, encoding='utf-8'))
-    gmail_password = cipher.encrypt(bytes(gmail_password, encoding='utf-8'))
-    sender_name = cipher.encrypt(bytes(sender_name, encoding='utf-8'))
-    # write and replace the old files:
-    with open(here+'/log_credentials.txt', 'w') as file:
-        file.write(key)
-    with open(here+'/mail_credentials.txt', 'w') as file:
-        file.write(gmail_user.decode("utf-8")+'\n')
-        file.write(gmail_password.decode("utf-8")+'\n')
-        file.write(sender_name.decode("utf-8")+'\n')
-    with open(here+'/salt.txt', 'wb') as file:
-        file.write(salt)
-    # clean:
-    del uname, password
+gmail_user = mail_cred[0]
+gmail_password = mail_cred[1]
+sender_name = mail_cred[2]
+
+## if the credential file contains one line only we assume it has already be encrypted:
+#if os.path.isfile(here+'/salt.txt'):
+#    key = log_cred[0]
+#    gmail_user = bytes(mail_cred[0], encoding='utf-8')
+#    gmail_password = bytes(mail_cred[1], encoding='utf-8')
+#    sender_name = bytes(mail_cred[2], encoding='utf-8')
+#    with open(here+'/salt.txt', 'rb') as file:
+#        salt = file.read()
+#else:
+#    uname = log_cred[0]
+#    password = log_cred[1]
+#    gmail_user = mail_cred[0]
+#    gmail_password = mail_cred[1]
+#    sender_name = mail_cred[2]
+#    # hash uname and password:
+#    key = sha256_crypt.hash(uname+password)
+#    # encrypt the gmail credentials:
+#    salt, cipher = utilities.generate_salt_cipher(uname+password, salt=None)
+#    gmail_user = cipher.encrypt(bytes(gmail_user, encoding='utf-8'))
+#    gmail_password = cipher.encrypt(bytes(gmail_password, encoding='utf-8'))
+#    sender_name = cipher.encrypt(bytes(sender_name, encoding='utf-8'))
+#    # write and replace the old files:
+#    with open(here+'/log_credentials.txt', 'w') as file:
+#        file.write(key)
+#    with open(here+'/mail_credentials.txt', 'w') as file:
+#        file.write(gmail_user.decode("utf-8")+'\n')
+#        file.write(gmail_password.decode("utf-8")+'\n')
+#        file.write(sender_name.decode("utf-8")+'\n')
+#    with open(here+'/salt.txt', 'wb') as file:
+#        file.write(salt)
+#    # clean:
+#    del uname, password
