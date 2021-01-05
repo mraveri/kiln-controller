@@ -14,15 +14,15 @@ import geventwebsocket
 from gevent.pywsgi import WSGIServer
 from geventwebsocket.handler import WebSocketHandler
 from geventwebsocket import WebSocketError
-
+from passlib.hash import sha256_crypt
 
 try:
     sys.dont_write_bytecode = True
     import config
     sys.dont_write_bytecode = False
 except:
-    print ("Could not import config file.")
-    print ("Copy config.py.EXAMPLE to config.py and adapt it for your setup.")
+    print("Could not import config file.")
+    print("Copy config.py.EXAMPLE to config.py and adapt it for your setup.")
     exit(1)
 
 logging.basicConfig(level=config.log_level, format=config.log_format)
@@ -34,8 +34,9 @@ sys.path.insert(0, script_dir + '/lib/')
 profile_path = os.path.join(script_dir, "storage", "profiles")
 history_path = os.path.join(script_dir, "storage", "history")
 
-from oven import Oven, Profile
-from ovenMonitor import OvenMonitor
+from lib.oven import Oven, Profile
+from lib.ovenMonitor import OvenMonitor
+import lib.utilities as utilities
 
 app = bottle.Bottle()
 oven = Oven()
@@ -44,11 +45,34 @@ oven = Oven()
 analysis_settings = {'smoothing_scale': config.smoothing_scale}
 ovenMonitor = OvenMonitor(oven, analysis_settings=analysis_settings)
 
+
+# autentication:
+def is_authenticated_user(user, password):
+    # check username and password:
+    try:
+        test = sha256_crypt.verify(user+password, config.key)
+        # if the user correctly authenticates we decrypt the email passwords:
+        if test:
+            salt, cipher = utilities.generate_salt_cipher(user+password, salt=config.salt)
+            config.gmail_user = cipher.decrypt(config.gmail_user).decode("utf-8")
+            config.gmail_password = cipher.decrypt(config.gmail_password).decode("utf-8")
+            config.sender_name = cipher.decrypt(config.sender_name).decode("utf-8")
+            print(config.gmail_user)
+            print(config.gmail_password)
+            print(config.sender_name)
+        return test
+    except ValueError:
+        return False
+
+
 @app.route('/')
+@bottle.auth_basic(is_authenticated_user)
 def index():
     return bottle.redirect('/picoreflow/index_monitor.html')
 
+
 @app.post('/api')
+@bottle.auth_basic(is_authenticated_user)
 def handle_api():
     log.info("/api is alive")
     log.info(bottle.request.json)
@@ -72,22 +96,22 @@ def handle_api():
         # FIXME juggling of json should happen in the Profile class
         profile_json = json.dumps(profile)
         profile = Profile(profile_json)
-        oven.run_profile(profile,startat=startat)
+        oven.run_profile(profile, startat=startat)
         ovenMonitor.record(profile)
-
 
     if bottle.request.json['cmd'] == 'stop':
         log.info("api stop command received")
         oven.abort_run()
 
-    return { "success" : True }
+    return {"success": True}
+
 
 def find_profile(wanted):
     '''
     given a wanted profile name, find it and return the parsed
     json profile object or None.
     '''
-    #load all profiles from disk
+    # load all profiles from disk
     profiles = get_profiles()
     json_profiles = json.loads(profiles)
 
@@ -96,6 +120,7 @@ def find_profile(wanted):
         if profile['name'] == wanted:
             return profile
     return None
+
 
 @app.route('/picoreflow/:filename#.*#')
 def send_static(filename):
@@ -145,9 +170,7 @@ def handle_control():
                 log.info("Stop command received")
                 oven.abort_run()
                 # plot and send email:
-                if config.gmail_user is not None and \
-                   config.gmail_password is not None and \
-                   len(ovenMonitor.email_destination) > 0:
+                if len(ovenMonitor.email_destination) > 0:
                     ovenMonitor.send_email_report(history_path,
                                                   config.sender_name,
                                                   config.gmail_user,
@@ -276,10 +299,10 @@ def delete_profile(profile):
 
 def get_config():
     return json.dumps({"temp_scale": config.temp_scale,
-        "time_scale_slope": config.time_scale_slope,
-        "time_scale_profile": config.time_scale_profile,
-        "kwh_rate": config.kwh_rate,
-        "currency_type": config.currency_type})
+                       "time_scale_slope": config.time_scale_slope,
+                       "time_scale_profile": config.time_scale_profile,
+                       "kwh_rate": config.kwh_rate,
+                       "currency_type": config.currency_type})
 
 ###############################################################################
 # Main functions and run

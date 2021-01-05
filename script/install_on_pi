@@ -25,5 +25,17 @@ source venv/bin/activate
 pip3 install --upgrade setuptools
 pip3 install -r requirements.txt
 
+# install what we need to be on the internet:
+wget https://nodejs.org/dist/v10.15.3/node-v10.15.3-linux-armv6l.tar.xz
+tar xvf node-v10.15.3-linux-armv6l.tar.xz
+cd node-v10.15.3-linux-armv6l
+sudo cp -R bin/* /usr/bin/
+sudo cp -R lib/* /usr/lib/
+sudo apt-get update && sudo apt-get upgrade
+sudo npm install -g localtunnel
+cd ..
+rm -rf node-v10.15.3-linux-armv6l node-v10.15.3-linux-armv6l.tar.xz
+
 # create the credential file:
-touch credentials.txt
+touch mail_credentials.txt
+touch log_credentials.txt

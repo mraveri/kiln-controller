@@ -95,6 +95,8 @@ then change raspberrypi to the name you chose in the file:
 
     sudo nano /etc/hosts
 
+You should really do this if you plan to expose to the whole internet the monitor.
+
 Now reboot with:
 
     sudo reboot
@@ -144,12 +146,22 @@ Then we use the installation script in the script directory:
 
 This will go on for a while. You can check the script content to see what this is doing.
 
-To set up email notifications you should see that the installer has created a file called credentials.txt.
-Open it and fill three lines with the email address that will send emails, the password and its name. I use a dummy gmail account and my credential file looks like this:
+The installer creates two empty files: mail_credentials.txt and log_credentials.txt
+
+The first file is used to set up email notifications.
+Open mail_credentials and fill three lines with the email address that will send emails, the password and its name. I use a dummy gmail account and my credential file looks like this:
 
     name@gmail.com
     password
     Name Sending Email
+
+The second file is used to protect connecting to the pi web interface.
+Open the file and write:
+
+    username
+    password
+
+Do not worry that these are human readable. The first time the monitor is used the files will be encrypted.
 
 Then reboot the pi.
 
@@ -164,6 +176,26 @@ And since we want the monitor to run at startup we give:
 These are instructions for deployment, if you want to develop the code refer to the
 standard instructions.
 
+To allow access to the monitor from outside the local network run:
+
+    sudo ./script/internet_setup
+
+On boot the monitor website will be reachable at:
+
+    http://hostname.loca.lt
+
+where hostname is the name that you previously set for the raspberry connection.
+
+For internet access we use https://github.com/localtunnel/localtunnel
+
 ## Network set-up
 
 In this part we set-up what is needed to access the kiln-monitor from somewhere that is not the local network. Only the monitor interface should be exposed while it should be impossible to log in in the raspberry.
+
+https://www.raspberrypi.org/documentation/configuration/wireless/access-point-routed.md
+
+
+## To do:
+
+Password protect the connection:
+https://stackoverflow.com/questions/52461587/basic-auth-authentication-in-bottle

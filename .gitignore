@@ -8,7 +8,8 @@ thumbs.db
 #config.py
 .idea/*
 .DS_Store
-credentials.txt
-broadcast_list.txt
+log_credentials.txt
+mail_credentials.txt
+salt.txt
 *.pdf
 venv

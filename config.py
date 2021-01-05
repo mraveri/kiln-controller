@@ -1,21 +1,23 @@
 import logging
 import os
+from passlib.hash import sha256_crypt
+import lib.utilities as utilities
 
 ########################################################################
 #
 #   General options
 
-### Logging
+# Logging
 log_level = logging.INFO
 log_format = '%(asctime)s %(levelname)s %(name)s: %(message)s'
 
-### Server
+# Server
 listening_ip = "0.0.0.0"
 listening_port = 8081
 
-### Cost Estimate
-kwh_rate        = 0.18  # Rate in currency_type to calculate cost to run job
-currency_type   = "$"   # Currency Symbol to show when calculating cost to run job
+# Cost Estimate
+kwh_rate = 0.18  # Rate in currency_type to calculate cost to run job
+currency_type = "$"   # Currency Symbol to show when calculating cost to run job
 
 ########################################################################
 #
@@ -26,9 +28,9 @@ currency_type   = "$"   # Currency Symbol to show when calculating cost to run j
 #   These were tested on a Pi B Rev2 but of course you
 #   can use whichever GPIO you prefer/have available.
 
-### Outputs
+# Outputs
 gpio_heat = 23  # Switches zero-cross solid-state-relay
-heater_invert = 0 # switches the polarity of the heater control
+heater_invert = 0  # Switches the polarity of the heater control
 
 ### Thermocouple Adapter selection:
 #   max31855 - bitbang SPI interface
@@ -113,33 +115,86 @@ thermocouple_offset = 0
 
 # smoothing scale for plots, in hours. Default is 1 minute
 smoothing_scale = 1./60.
+# cool temperature:
+unload_temperature = 122.  # F for 50 C
+# zoom around peak for plots:
+peak_zoom = 300.
 
 ########################################################################
 #
-#   Email settings:
+#   Authentication and email settings:
 here = os.path.dirname(os.path.abspath(__file__))
+log = logging.getLogger(__name__)
 
-if os.path.isfile(here+'/credentials.txt'):
-    with open(here+'/credentials.txt', 'r') as file:
-        cred = file.read()
-    try:
-        split_cred = cred.split('\n')
-        gmail_user = split_cred[0]
-        gmail_password = split_cred[1]
-        sender_name = split_cred[2]
-    except IndexError:
-        print('Could not import credentials file.')
-        gmail_user = None
-        gmail_password = None
-        sender_name = None
+
+def helper_error_logging():
+    log.critical('Error with authentication file. \n'
+                 + 'Create the file: '+here+'/log_credentials.txt \n'
+                 + 'With your choice of username and password to log to the kiln monitor \n'
+                 + 'First line should be the desired username \n'
+                 + 'Second line should be desired password'
+                 )
+    raise ValueError
+
+
+def helper_error_mail():
+    log.critical('Error with email credentials file. \n'
+                 + 'Create the file: '+here+'/mail_credentials.txt \n'
+                 + 'With your gmail email and password to be able to send emails \n'
+                 + 'First line should be gmail email address \n'
+                 + 'Second line should be gmail email password \n'
+                 + 'Third line should be the human name that sends the email \n'
+                 + 'We suggest creating a dummy gmail address for this.')
+    raise ValueError
+
+
+# import credentials for logging in:
+if os.path.isfile(here+'/log_credentials.txt'):
+    with open(here+'/log_credentials.txt', 'r') as file:
+        log_cred = file.read()
 else:
-    print('No email credentials file found.')
-    print('Create the file:', here+'/credentials.txt')
-    print('With your gmail email and password to be able to send emails')
-    print('First line should be gmail email address')
-    print('Second line should be gmail email password')
-    print('Third line should be the human name that sends the email')
-    print('We suggest creating a dummy gmail address for this.')
-    gmail_user = None
-    gmail_password = None
-    sender_name = None
+    helper_error_logging()
+
+# import email logging credentials:
+if os.path.isfile(here+'/mail_credentials.txt'):
+    with open(here+'/mail_credentials.txt', 'r') as file:
+        mail_cred = file.read()
+else:
+    helper_error_mail()
+
+# now parse:
+log_cred = log_cred.split('\n')
+mail_cred = mail_cred.split('\n')
+
+# if the credential file contains one line only we assume it has already be encrypted:
+if os.path.isfile(here+'/salt.txt'):
+    key = log_cred[0]
+    gmail_user = bytes(mail_cred[0], encoding='utf-8')
+    gmail_password = bytes(mail_cred[1], encoding='utf-8')
+    sender_name = bytes(mail_cred[2], encoding='utf-8')
+    with open(here+'/salt.txt', 'rb') as file:
+        salt = file.read()
+else:
+    uname = log_cred[0]
+    password = log_cred[1]
+    gmail_user = mail_cred[0]
+    gmail_password = mail_cred[1]
+    sender_name = mail_cred[2]
+    # hash uname and password:
+    key = sha256_crypt.hash(uname+password)
+    # encrypt the gmail credentials:
+    salt, cipher = utilities.generate_salt_cipher(uname+password, salt=None)
+    gmail_user = cipher.encrypt(bytes(gmail_user, encoding='utf-8'))
+    gmail_password = cipher.encrypt(bytes(gmail_password, encoding='utf-8'))
+    sender_name = cipher.encrypt(bytes(sender_name, encoding='utf-8'))
+    # write and replace the old files:
+    with open(here+'/log_credentials.txt', 'w') as file:
+        file.write(key)
+    with open(here+'/mail_credentials.txt', 'w') as file:
+        file.write(gmail_user.decode("utf-8")+'\n')
+        file.write(gmail_password.decode("utf-8")+'\n')
+        file.write(sender_name.decode("utf-8")+'\n')
+    with open(here+'/salt.txt', 'wb') as file:
+        file.write(salt)
+    # clean:
+    del uname, password

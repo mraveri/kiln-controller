@@ -8,3 +8,5 @@ Adafruit-MAX31855
 numpy
 matplotlib
 scipy
+passlib
+cryptography

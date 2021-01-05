@@ -42,6 +42,14 @@ But not necessarily.
 
 ## Mounting
 
+Screws:
+
+1. 4 x M2*4 for camera
+2. 5 x M3*6 for cover
+3. 4 x M2.6*6 for Raspberry
+4. 2 x M2.6*8 for thermocouple cable
+5. 2 x M2*6 for thermocouple amplifier
+
 
 Soldering work
 
@@ -68,3 +76,7 @@ Two led to GPIO
 
 GPIO12 pin 32, GND pin 30
 GPIO16 pin 36, GND pin 34
+
+
+Green led 2V drop, 311 O resistence
+yellow 2V
