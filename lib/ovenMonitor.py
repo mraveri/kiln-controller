@@ -378,7 +378,7 @@ class OvenMonitor(threading.Thread):
             return
 
         # email body:
-        msg.attach(MIMEText('Kiln monitor started, you can follow the fire at'+name+'\n'))
+        msg.attach(MIMEText('Kiln monitor started, you can follow the fire at '+name+'\n'))
         # send the email:
         server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
         server.ehlo()
