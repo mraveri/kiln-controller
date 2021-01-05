@@ -185,7 +185,7 @@ else:
     gmail_password = mail_cred[1]
     sender_name = mail_cred[2]
     # hash uname and password:
-    key = sha256_crypt.hash(uname+password)
+    key = sha256_crypt.hash(uname+password, rounds=1000)
     # encrypt the gmail credentials:
     salt, cipher = utilities.generate_salt_cipher(uname+password, salt=None)
     gmail_user = cipher.encrypt(bytes(gmail_user, encoding='utf-8'))
