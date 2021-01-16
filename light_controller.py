@@ -80,37 +80,15 @@ def main():
 
     # some initial fireworks:
     pixels.fill((0, 0, 0))
-    color_chase(RED, 0.1, pixels)
-    color_chase(YELLOW, 0.1, pixels)
-    color_chase(GREEN, 0.1, pixels)
-    color_chase(CYAN, 0.1, pixels)
-    color_chase(BLUE, 0.1, pixels)
-    color_chase(PURPLE, 0.1, pixels)
+    color_chase(RED, 0.05, pixels)
+    color_chase(YELLOW, 0.05, pixels)
+    color_chase(GREEN, 0.05, pixels)
+    color_chase(CYAN, 0.05, pixels)
+    color_chase(BLUE, 0.05, pixels)
+    color_chase(PURPLE, 0.05, pixels)
     rainbow_cycle(0, pixels)
     pixels.fill((0, 0, 0))
     pixels[0] = GREEN
-
-    #@app.before_first_request
-    #def init():
-    #    pixels.fill((0, 0, 0))
-
-    #    pixels.fill(RED)
-    #    pixels.show()
-    #    time.sleep(1)
-    #    pixels.fill(GREEN)
-    #    pixels.show()
-    #    time.sleep(1)
-    #    pixels.fill(BLUE)
-    #    pixels.show()
-    #    time.sleep(1)
-
-    #    color_chase(RED, 0.1, pixels)
-    #    color_chase(YELLOW, 0.1, pixels)
-    #    color_chase(GREEN, 0.1, pixels)
-    #    color_chase(CYAN, 0.1, pixels)
-    #    color_chase(BLUE, 0.1, pixels)
-    #    color_chase(PURPLE, 0.1, pixels)
-    #    rainbow_cycle(0, pixels)
 
     @app.route('/', methods=['POST'])
     def color_pixels():
@@ -137,11 +115,11 @@ def main():
             # get state:
             state = {}
             for ind, pix in enumerate(pixels):
-                state[ind] = list(str(pix))
+                state[ind] = list(list(pix))
             print(pixels)
             print(state)
             print(jsonify(state))
-            return 'Ciao', 200
+            return jsonify(state), 200
 
     serve(app, host="0.0.0.0", port=5001)
 
