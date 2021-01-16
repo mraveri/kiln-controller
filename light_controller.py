@@ -2,7 +2,7 @@
 # Initial imports:
 ###############################################################################
 
-from flask import Flask, render_template, url_for, request, redirect, jsonify, abort
+from flask import Flask, request, jsonify
 from waitress import serve
 import board
 import neopixel
@@ -15,6 +15,8 @@ import time
 num_leds = 8
 neopixel_gpio_pin = board.D18
 neopixel_brightness = 0.2
+host = "0.0.0.0"
+port = 5001
 
 ###############################################################################
 # Predefined colors:
@@ -116,12 +118,11 @@ def main():
             state = {}
             for ind, pix in enumerate(pixels):
                 state[ind] = list(list(pix))
-            print(pixels)
-            print(state)
-            print(jsonify(state))
+            #
             return jsonify(state), 200
 
-    serve(app, host="0.0.0.0", port=5001)
+    serve(app, host=host, port=port)
+
 
 if __name__ == '__main__':
     main()
