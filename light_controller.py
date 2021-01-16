@@ -15,6 +15,7 @@ import time
 num_leds = 8
 neopixel_gpio_pin = board.D18
 neopixel_brightness = 0.5
+neopixel_brightness = 1.0
 
 ###############################################################################
 # Predefined colors:
