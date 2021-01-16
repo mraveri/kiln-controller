@@ -126,6 +126,7 @@ def main():
             state = {}
             for ind, pix in enumerate(pixels):
                 state[ind] = list(str(pix))
+            print(state)
             print(jsonify(state))
             return 'Ciao', 200
 
