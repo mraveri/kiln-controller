@@ -158,9 +158,18 @@ These should definitely be different from your raspberry user and password.
 These are not encrypted but should not be accessible from anybody that does
 not have access to the physical pi and your computer...
 
+If you want more security you can make these files accessible only to root:
+
+    chmod 600 log_credentials.txt mail_credentials.txt
+    sudo chown root:root log_credentials.txt mail_credentials.txt
+
 Go to ngrok. Register and authenticate.
 
 Then reboot the pi.
+
+Now turn on the leds by:
+
+
 
 Now turn on wi-fi management with led by giving:
 
