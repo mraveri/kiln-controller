@@ -169,7 +169,7 @@ Then reboot the pi.
 
 Now turn on the leds by:
 
-
+    sudo ./script/light_setup
 
 Now turn on wi-fi management with led by giving:
 

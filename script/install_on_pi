@@ -13,7 +13,7 @@ cd ..
 # install python:
 echo 'Initial install'
 sudo apt-get install build-essential python3-pip python3-dev python3-virtualenv libevent-dev virtualenv -y
-sudo apt-get install git scons swig
+sudo apt-get install git scons swig -y
 
 # install numpy and matplotlib:
 sudo apt-get install libblas-dev liblapack-dev libatlas3-base -y
@@ -26,8 +26,9 @@ source venv/bin/activate
 
 # install all python packages we need:
 echo 'Installing python packages that are needed'
-pip3 install --upgrade setuptools
-pip3 install -r requirements.txt
+pip install --upgrade pip
+pip install --upgrade setuptools
+pip install -r requirements.txt
 
 # install what we need to be on the internet:
 #echo 'Installing node'
@@ -45,7 +46,7 @@ pip3 install -r requirements.txt
 sudo pip install rpi_ws281x adafruit-circuitpython-neopixel
 sudo pip install --force-reinstall adafruit-blinka
 
-# blacklist 
+# blacklist
 
 # create the credential file:
 touch mail_credentials.txt
