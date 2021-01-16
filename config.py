@@ -65,7 +65,8 @@ pid_kd = 217  # Derivative was 217
 #
 #   Temperature reading led:
 
-gpio_led = 12
+led_controller = "http://0.0.0.0:5001"
+temperature_led = 2
 
 ########################################################################
 #

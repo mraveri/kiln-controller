@@ -14,7 +14,7 @@ cat <<EOF > /etc/systemd/system/wifi-check.service
 
 [Unit]
 Description=wifi-check
-After=network.target
+After=network.target led-controller.service
 
 [Service]
 ExecStart=/usr/bin/bash $SCRIPT_PATH/wifi_check

@@ -13,3 +13,4 @@ mail_credentials.txt
 salt.txt
 *.pdf
 venv
+playground*

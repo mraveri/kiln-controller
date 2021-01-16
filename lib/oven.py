@@ -4,6 +4,7 @@ import random
 import datetime
 import logging
 import json
+import requests
 
 import config
 
@@ -36,7 +37,6 @@ try:
     GPIO.setmode(GPIO.BCM)
     GPIO.setwarnings(False)
     GPIO.setup(config.gpio_heat, GPIO.OUT)
-    GPIO.setup(config.gpio_led, GPIO.OUT, initial=GPIO.LOW)
     gpio_available = True
 except ImportError:
     msg = "Could not initialize GPIOs, oven operation will only be simulated!"
@@ -233,10 +233,10 @@ class TempSensorReal(TempSensor):
                 if temp > maxtemp:
                     maxtemp = temp
                 if x == 0 and self.active:
-                    GPIO.output(config.gpio_led, GPIO.HIGH)
+                    requests.post(config.led_controller, json={config.temperature_led: (225, 0, 0)})
                 time.sleep(sleeptime)
                 if x == 0 and self.active:
-                    GPIO.output(config.gpio_led, GPIO.LOW)
+                    requests.post(config.led_controller, json={config.temperature_led: (0, 0, 0)})
             self.temperature = maxtemp
 
 
@@ -279,10 +279,10 @@ class TempSensorSimulate(TempSensor):
             self.temperature = t
 
             if self.active and gpio_available:
-                GPIO.output(config.gpio_led, GPIO.HIGH)
+                requests.post(config.led_controller, json={config.temperature_led: (225, 0, 0)})
             time.sleep(self.sleep_time / 2)
             if self.active and gpio_available:
-                GPIO.output(config.gpio_led, GPIO.LOW)
+                requests.post(config.led_controller, json={config.temperature_led: (0, 0, 0)})
             time.sleep(self.sleep_time / 2)
 
 

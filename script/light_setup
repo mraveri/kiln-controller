@@ -10,22 +10,21 @@ cd $SCRIPT_PATH
 BASEDIR=$SCRIPT_PATH/..
 
 # write the service:
-cat <<EOF > /etc/systemd/system/kiln-monitor.service
+cat <<EOF > /etc/systemd/system/led-controller.service
 
 [Unit]
-Description=kiln-monitor
-After=network.target led-controller.service
-StartLimitIntervalSec=2
+Description=led-controller
 
 [Service]
 Restart=always
-ExecStart=$BASEDIR/venv/bin/python $BASEDIR/kiln-monitor.py
+ExecStart=$BASEDIR/venv/bin/python $BASEDIR/script/light_controller.py
 
 [Install]
 WantedBy=multi-user.target
 
 EOF
 
-# activate the service:
-sudo systemctl start kiln-monitor
-sudo systemctl enable kiln-monitor
+# start service now:
+sudo systemctl start led-controller.service
+# on boot:
+sudo systemctl enable led-controller.service

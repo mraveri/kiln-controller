@@ -22,6 +22,8 @@ def hello_world():
             except ValueError:
                 cmd = key
 
+            print(list(command[cmd]))
+
             print(cmd)
 
 

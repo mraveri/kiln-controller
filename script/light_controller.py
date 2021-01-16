@@ -7,6 +7,7 @@ from waitress import serve
 import board
 import neopixel
 import time
+import logging
 
 ###############################################################################
 # Settings:
@@ -17,6 +18,8 @@ neopixel_gpio_pin = board.D18
 neopixel_brightness = 0.2
 host = "0.0.0.0"
 port = 5001
+log_level = logging.INFO
+log_format = '%(asctime)s %(levelname)s %(name)s: %(message)s'
 
 ###############################################################################
 # Predefined colors:
@@ -69,6 +72,11 @@ def rainbow_cycle(wait, pixels):
 ###############################################################################
 
 
+logging.basicConfig(level=log_level, format=log_format)
+log = logging.getLogger("light_controller")
+log.info("Starting light controller")
+
+
 def main():
 
     # initialize server:
@@ -111,7 +119,16 @@ def main():
             for key in command.keys():
                 try:
                     ind = int(key)
+                    # parse command:
+                    cmd = command[key]
+                    if isinstance(cmd, str):
+                        clean_char = ['[', ']', '{', '}', '(', ')', ' ']
+                        for ch in clean_char:
+                            cmd = cmd.replace(ch, '')
+                        cmd = [int(n) for n in cmd.split(',')]
+                    # apply pixel value:
                     pixels[ind] = command[key]
+
                 except ValueError:
                     pass
             # get state:

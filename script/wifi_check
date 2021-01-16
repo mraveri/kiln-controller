@@ -1,19 +1,12 @@
 #!/bin/bash
 
-# enable light led while Wi-Fi is connected
-if [[ ! -d /sys/class/gpio/gpio16/ ]]
-then
-  echo 16 > /sys/class/gpio/export
-  echo out > /sys/class/gpio/gpio16/direction
-fi
-
 # get wi-fi state:
 state=$(cat /sys/class/net/wlan0/operstate)
 
 # if state is up we light the led, otherwise we turn it off and try to restart Wi-Fi
 if [ $state = "up" ]; then
-  echo 1 > /sys/class/gpio/gpio16/value
+  curl -X POST -H "Content-Type: application/json" -d '{"1": "(0,0,255)"}' http://0.0.0.0:5001
 else
-  echo 0 > /sys/class/gpio/gpio16/value
+  curl -X POST -H "Content-Type: application/json" -d '{"1": "(0,0,0)"}' http://0.0.0.0:5001
   ip link set wlan0 up
 fi;
