@@ -78,27 +78,37 @@ def main():
                                brightness=neopixel_brightness)
     pixels.fill((0, 0, 0))
 
-    @app.before_first_request
-    def init():
-        pixels.fill((0, 0, 0))
+    # some initial fireworks:
+    pixels.fill((0, 0, 0))
+    color_chase(RED, 0.1, pixels)
+    color_chase(YELLOW, 0.1, pixels)
+    color_chase(GREEN, 0.1, pixels)
+    color_chase(CYAN, 0.1, pixels)
+    color_chase(BLUE, 0.1, pixels)
+    color_chase(PURPLE, 0.1, pixels)
+    pixels.fill((0, 0, 0))
 
-        pixels.fill(RED)
-        pixels.show()
-        time.sleep(1)
-        pixels.fill(GREEN)
-        pixels.show()
-        time.sleep(1)
-        pixels.fill(BLUE)
-        pixels.show()
-        time.sleep(1)
+    #@app.before_first_request
+    #def init():
+    #    pixels.fill((0, 0, 0))
 
-        color_chase(RED, 0.1, pixels)
-        color_chase(YELLOW, 0.1, pixels)
-        color_chase(GREEN, 0.1, pixels)
-        color_chase(CYAN, 0.1, pixels)
-        color_chase(BLUE, 0.1, pixels)
-        color_chase(PURPLE, 0.1, pixels)
-        rainbow_cycle(0, pixels)
+    #    pixels.fill(RED)
+    #    pixels.show()
+    #    time.sleep(1)
+    #    pixels.fill(GREEN)
+    #    pixels.show()
+    #    time.sleep(1)
+    #    pixels.fill(BLUE)
+    #    pixels.show()
+    #    time.sleep(1)
+
+    #    color_chase(RED, 0.1, pixels)
+    #    color_chase(YELLOW, 0.1, pixels)
+    #    color_chase(GREEN, 0.1, pixels)
+    #    color_chase(CYAN, 0.1, pixels)
+    #    color_chase(BLUE, 0.1, pixels)
+    #    color_chase(PURPLE, 0.1, pixels)
+    #    rainbow_cycle(0, pixels)
 
     @app.route('/', methods=['POST'])
     def color_pixels():
