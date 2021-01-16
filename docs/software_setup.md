@@ -84,8 +84,10 @@ Now we run the config script:
 Navigating the script we make sure that:
 
 1. 3p1 enable the camera
-2. 5l2 to set the time zone
-3. 6a1 to expand partition and use the full SD card
+2. 3p4 enable SPI
+3. 3p5 enable I2C
+4. 5l2 to set the time zone
+5. 6a1 to expand partition and use the full SD card
 
 If you want to change the network name of the pi from the default raspberrypi you can edit the file:
 
@@ -153,7 +155,8 @@ Open the file and write:
     password
 
 These should definitely be different from your raspberry user and password.
-Do not worry that these are human readable. The first time the monitor is used the files will be encrypted.
+These are not encrypted but should not be accessible from anybody that does
+not have access to the physical pi and your computer...
 
 Go to ngrok. Register and authenticate.
 
