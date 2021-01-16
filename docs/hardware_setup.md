@@ -27,10 +27,10 @@ These go as in the main readme with the addition of status leds and camera for m
 6. Camera module
 7. Thermocouple amplifier
 8. Thermocouple and thermocouple cable
-9. 3 led of possibly different color, 3 resistors (what value)
+9. Led module NeoPixel Stick
 10. misc cables to solder
 
-### Other things you might need:x
+### Other things you might need:
 
 But not necessarily.
 
@@ -56,27 +56,7 @@ Soldering work
 Thermocouple reader to GPIO
 
 
-### External status leds:
+### External LED:
 
-The pi puts out about 3.3V from its ports. Depending on the leds you have use
-an online tool like:
-
-https://ohmslawcalculator.com/led-resistor-calculator
-
-to dimension the resistence that goes with the led.
-
-**Power led**
-
-Power led to serial
-GPIO14 pin 8, GND pin 6
-
-
-
-Two led to GPIO
-
-GPIO12 pin 32, GND pin 30
-GPIO16 pin 36, GND pin 34
-
-
-Green led 2V drop, 311 O resistence
-yellow 2V
+Connect the wiring, connect both grounds.
+connect power to second 3v3 port.

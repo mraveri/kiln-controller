@@ -37,7 +37,6 @@ analysis_settings = {}
 filename = '.'
 """
 
-
 class OvenMonitor(threading.Thread):
 
     def __init__(self, oven, analysis_settings={}):
@@ -50,6 +49,8 @@ class OvenMonitor(threading.Thread):
         self.daemon = True
         self.oven = oven
         self.analysis_settings = analysis_settings
+        self.email_destination = []
+        self.tunnel_website = None
         self.start()
 
     def run(self):
@@ -352,7 +353,7 @@ class OvenMonitor(threading.Thread):
         server.close()
 
         # print feedback:
-        log.debug('Email sent')
+        log.debug('Email sent to: '+msg['To'])
 
     def send_email_start(self, sender_name, sender_user, password):
         """
@@ -366,19 +367,11 @@ class OvenMonitor(threading.Thread):
         msg['Subject'] = '[kiln report] ' + self.started.strftime('%Y/%m/%d %H:%M')
         msg['From'] = sender_name + ' <'+sender_user+'>'
         msg['To'] = ", ".join(self.email_destination)
-        # get the address of the server:
-        try:
-            result = subprocess.run(['journalctl', '-u', 'internet_spawn.service'], stdout=subprocess.PIPE).stdout.decode('utf-8')
-            result = [strings for strings in result.split('\n') if 'your url is:' in strings][-1]
-            name = re.search('your url is: https://(.*).loca.lt', result).group(1)
-            name = 'http://'+name+'.loca.lt'
-        except Exception as ex:
-            logging.error('internet_spawn.service does not seem to be running.')
-            logging.error(ex)
-            return
-
         # email body:
-        msg.attach(MIMEText('Kiln monitor started, you can follow the fire at '+name+'\n'))
+        if self.tunnel_website is not None:
+            msg.attach(MIMEText('Kiln monitor started, you can follow the fire at '+self.tunnel_website+'\n'))
+        else:
+            msg.attach(MIMEText('Kiln monitor started\n'))
         # send the email:
         server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
         server.ehlo()

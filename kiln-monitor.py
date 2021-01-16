@@ -14,8 +14,16 @@ import geventwebsocket
 from gevent.pywsgi import WSGIServer
 from geventwebsocket.handler import WebSocketHandler
 from geventwebsocket import WebSocketError
-from passlib.hash import sha256_crypt
 
+# import ngrok:
+try:
+    from pyngrok import ngrok
+    has_ngrok = True
+except Exception as ex:
+    print(ex)
+    has_ngrok = False
+
+# Import config file:
 try:
     sys.dont_write_bytecode = True
     import config
@@ -45,31 +53,26 @@ oven = Oven()
 analysis_settings = {'smoothing_scale': config.smoothing_scale}
 ovenMonitor = OvenMonitor(oven, analysis_settings=analysis_settings)
 
-
-# autentication:
-def is_authenticated_user(user, password):
-    # check username and password:
+# spawn website:
+if has_ngrok:
     try:
-        test = sha256_crypt.verify(user+password, config.key)
-        # if the user correctly authenticates we decrypt the email passwords:
-        if test and isinstance(config.gmail_user, bytes):
-            salt, cipher = utilities.generate_salt_cipher(user+password, salt=config.salt)
-            config.gmail_user = cipher.decrypt(config.gmail_user).decode("utf-8")
-            config.gmail_password = cipher.decrypt(config.gmail_password).decode("utf-8")
-            config.sender_name = cipher.decrypt(config.sender_name).decode("utf-8")
-        return test
-    except ValueError:
-        return False
+        tunnel = ngrok.connect(config.listening_port, "http",
+                               name='kiln-monitor',
+                               inspect=False,
+                               auth=config.uname+':'+config.password)
+        ovenMonitor.tunnel_website = tunnel.public_url
+        log.info("Monitor reachable at %s" % tunnel.public_url)
+    except Exception as ex:
+        logging.error(ex)
+        has_ngrok = False
 
 
 @app.route('/')
-@bottle.auth_basic(is_authenticated_user)
 def index():
     return bottle.redirect('/picoreflow/index_monitor.html')
 
 
 @app.post('/api')
-@bottle.auth_basic(is_authenticated_user)
 def handle_api():
     log.info("/api is alive")
     log.info(bottle.request.json)
@@ -120,7 +123,6 @@ def find_profile(wanted):
 
 
 @app.route('/picoreflow/:filename#.*#')
-@bottle.auth_basic(is_authenticated_user)
 def send_static(filename):
     log.debug("serving %s" % filename)
     return bottle.static_file(filename, root=os.path.join(os.path.dirname(os.path.realpath(sys.argv[0])), "public"))
@@ -130,9 +132,8 @@ def get_websocket_from_request():
     env = bottle.request.environ
     wsock = env.get('wsgi.websocket')
     if not wsock:
-        abort(400, 'Expected WebSocket request.')
+        log.critical('Expected WebSocket request.')
     return wsock
-
 
 @app.route('/control')
 def handle_control():
@@ -148,14 +149,16 @@ def handle_control():
                 profile_obj = msgdict.get('profile')
                 emails = msgdict.get('mailto', '')
                 emails = emails.replace(' ', '').split(',')
+                emails = list(filter(None, emails))
                 if profile_obj:
                     profile_json = json.dumps(profile_obj)
                     profile = Profile(profile_json)
                 oven.run_profile(profile)
                 ovenMonitor.record(profile, emails)
-                ovenMonitor.send_email_start(config.sender_name,
-                                             config.gmail_user,
-                                             config.gmail_password)
+                if len(ovenMonitor.email_destination) > 0:
+                    ovenMonitor.send_email_start(config.sender_name,
+                                                 config.gmail_user,
+                                                 config.gmail_password)
             elif msgdict.get("cmd") == "SIMULATE":
                 log.info("SIMULATE command received")
                 #profile_obj = msgdict.get('profile')
@@ -179,9 +182,11 @@ def handle_control():
                 else:
                     ovenMonitor.save_record_to_file(history_path)
 
-        except WebSocketError:
+        except WebSocketError as ex1:
+            print('WebSocketError', ex1)
             break
-        except TypeError:
+        except TypeError as ex2:
+            print('TypeError', ex2)
             break
     log.info("websocket (control) closed")
 

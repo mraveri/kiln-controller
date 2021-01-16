@@ -103,14 +103,6 @@ Now reboot with:
 
 Notice that when you want to reconnect you have to use the new hostname.
 
-**Setting up power-led:**
-
-The serial port power led should work right away after the reboot.
-
-If it does not make sure that in the file /boot/config.txt you have enable_uart=1
-
-After changing that reboot and the led should light up.
-
 **Setting up security:**
 
 It is now time to step up the security of the pi. This is a crucial step to the security of the entire system and should not be overlooked.
@@ -163,6 +155,8 @@ Open the file and write:
 These should definitely be different from your raspberry user and password.
 Do not worry that these are human readable. The first time the monitor is used the files will be encrypted.
 
+Go to ngrok. Register and authenticate.
+
 Then reboot the pi.
 
 Now turn on wi-fi management with led by giving:
@@ -176,26 +170,9 @@ And since we want the monitor to run at startup we give:
 These are instructions for deployment, if you want to develop the code refer to the
 standard instructions.
 
-To allow access to the monitor from outside the local network run:
+## LED
 
-    sudo ./script/internet_setup
+Blacklist audio, check if necessary
+https://www.raspberrypi.org/forums/viewtopic.php?t=151460
 
-On boot the monitor website will be reachable at:
-
-    http://hostname.loca.lt
-
-where hostname is the name that you previously set for the raspberry connection.
-
-For internet access we use https://github.com/localtunnel/localtunnel
-
-## Network set-up
-
-In this part we set-up what is needed to access the kiln-monitor from somewhere that is not the local network. Only the monitor interface should be exposed while it should be impossible to log in in the raspberry.
-
-https://www.raspberrypi.org/documentation/configuration/wireless/access-point-routed.md
-
-
-## To do:
-
-Password protect the connection:
-https://stackoverflow.com/questions/52461587/basic-auth-authentication-in-bottle
+Install all drivers, manually if necessary.

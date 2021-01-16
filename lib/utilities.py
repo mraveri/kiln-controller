@@ -3,10 +3,6 @@ import os
 import numpy as np
 import scipy.integrate as integrate
 import scipy.signal as signal
-import base64
-from cryptography.fernet import Fernet
-from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
 
 ###############################################################################
@@ -45,25 +41,5 @@ def smooth_gaussian(x, y, sigma):
         _temp = _temp[len(y)*(num_rep-1)//2:len(y)*(num_rep-1)//2+len(y)]
     #
     return _temp
-
-###############################################################################
-
-
-def generate_salt_cipher(pwd, salt=None):
-    """
-    Generate salt and cipher to encrypt and decryps passwords.
-
-    Save the salt if you want to recover the result.
-    """
-    if salt is None:
-        salt = os.urandom(16)
-    kdf = PBKDF2HMAC(algorithm=hashes.SHA256(),
-                     length=32,
-                     salt=salt,
-                     iterations=100000,)
-    key = base64.urlsafe_b64encode(kdf.derive(bytes(pwd, encoding='utf-8')))
-    cipher = Fernet(key)
-    #
-    return salt, cipher
 
 ###############################################################################

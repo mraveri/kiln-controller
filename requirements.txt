@@ -9,5 +9,6 @@ Adafruit-MAX31855
 numpy
 matplotlib
 scipy
-passlib
-cryptography
+pyngrok
+flask
+waitress
