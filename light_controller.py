@@ -14,7 +14,7 @@ import time
 
 num_leds = 8
 neopixel_gpio_pin = board.D18
-neopixel_brightness = 0.1
+neopixel_brightness = 0.2
 
 ###############################################################################
 # Predefined colors:
@@ -86,7 +86,9 @@ def main():
     color_chase(CYAN, 0.1, pixels)
     color_chase(BLUE, 0.1, pixels)
     color_chase(PURPLE, 0.1, pixels)
+    rainbow_cycle(0, pixels)
     pixels.fill((0, 0, 0))
+    pixels[0] = GREEN
 
     #@app.before_first_request
     #def init():
