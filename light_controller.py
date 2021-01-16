@@ -14,7 +14,7 @@ import time
 
 num_leds = 8
 neopixel_gpio_pin = board.D18
-neopixel_brightness = 0.4
+neopixel_brightness = 0.1
 
 ###############################################################################
 # Predefined colors:
@@ -122,7 +122,11 @@ def main():
                     pixels[ind] = command[key]
                 except ValueError:
                     pass
-            print(jsonify(pixels))
+            # get state:
+            state = {}
+            for ind, pix in enumerate(pixels):
+                state[ind] = list(str(pix))
+            print(jsonify(state))
             return 'Ciao', 200
 
     serve(app, host="0.0.0.0", port=5001)
