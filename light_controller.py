@@ -82,12 +82,12 @@ def main():
 
     # some initial fireworks:
     pixels.fill((0, 0, 0))
-    color_chase(RED, 0.0, pixels)
-    color_chase(YELLOW, 0.0, pixels)
-    color_chase(GREEN, 0.0, pixels)
-    color_chase(CYAN, 0.0, pixels)
-    color_chase(BLUE, 0.0, pixels)
-    color_chase(PURPLE, 0.0, pixels)
+    color_chase(RED, 0.01, pixels)
+    color_chase(YELLOW, 0.01, pixels)
+    color_chase(GREEN, 0.01, pixels)
+    color_chase(CYAN, 0.01, pixels)
+    color_chase(BLUE, 0.01, pixels)
+    color_chase(PURPLE, 0.01, pixels)
     rainbow_cycle(0, pixels)
     pixels.fill((0, 0, 0))
     pixels[0] = GREEN
