@@ -131,7 +131,7 @@ def main():
                             cmd = cmd.replace(ch, '')
                         cmd = [int(n) for n in cmd.split(',')]
                     # apply pixel value:
-                    pixels[ind] = command[key]
+                    pixels[ind] = cmd
 
                 except ValueError as ex:
                     log.error(ex)
