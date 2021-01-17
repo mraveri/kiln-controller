@@ -109,12 +109,16 @@ def main():
             for key in command.keys():
                 if key == 'color_chase':
                     color_chase(command['color_chase'][0], command['color_chase'][1], pixels)
+                    command.pop(key)
                 elif key == 'rainbow_cycle':
                     rainbow_cycle(command['rainbow_cycle'], pixels)
+                    command.pop(key)
                 elif key == 'fill':
                     pixels.fill(command[key])
+                    command.pop(key)
                 elif key == 'brightness':
                     pixels.brightness = command[key]
+                    command.pop(key)
             # set colors as instructed:
             for key in command.keys():
                 try:
@@ -129,7 +133,8 @@ def main():
                     # apply pixel value:
                     pixels[ind] = command[key]
 
-                except ValueError:
+                except ValueError as ex:
+                    log.error(ex)
                     pass
             # get state:
             state = {}

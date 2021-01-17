@@ -43,11 +43,13 @@ pip install -r requirements.txt
 #rm -rf node-v10.15.3-linux-armv6l node-v10.15.3-linux-armv6l.tar.xz
 
 # install material for led controller:
-sudo pip install rpi_ws281x adafruit-circuitpython-neopixel
-sudo pip install --force-reinstall adafruit-blinka
+pip install rpi_ws281x adafruit-circuitpython-neopixel
+pip install Adafruit-Blinka
 
 # blacklist
 
 # create the credential file:
 touch mail_credentials.txt
 touch log_credentials.txt
+chmod 600 log_credentials.txt mail_credentials.txt
+sudo chown root:root log_credentials.txt mail_credentials.txt
