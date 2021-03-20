@@ -4,13 +4,12 @@
 .#*
 *.swp
 thumbs.db
-#storage/profiles
-#config.py
 .idea/*
 .DS_Store
 log_credentials.txt
 mail_credentials.txt
-salt.txt
 *.pdf
 venv
 playground*
+kiln-monitor.key
+kiln-monitor.crt

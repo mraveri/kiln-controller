@@ -58,7 +58,10 @@ if has_ngrok:
     try:
         tunnel = ngrok.connect(config.listening_port, "http",
                                name='kiln-monitor',
+                               bind_tls=True,
                                inspect=False,
+                               crt=script_dir+'/kiln-monitor.crt',
+                               key=script_dir+'/kiln-monitor.key',
                                auth=config.uname+':'+config.password)
         ovenMonitor.tunnel_website = tunnel.public_url
         log.info("Monitor reachable at %s" % tunnel.public_url)
@@ -320,7 +323,7 @@ def main():
     log.info("listening on %s:%d" % (ip, port))
 
     server = WSGIServer((ip, port), app,
-                        handler_class=WebSocketHandler)
+                        handler_class=WebSocketHandler, certfile=script_dir+'/kiln-monitor.crt', keyfile=script_dir+'/kiln-monitor.key')
     server.serve_forever()
 
 

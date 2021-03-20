@@ -14,8 +14,7 @@ var temp_scale_display = "C";
 var kwh_rate = 0.30;
 var currency_type = "USD";
 
-var port = "8081";
-var host = "ws://0.0.0.0:" + port;
+var host = "wss://" + window.location.hostname + ":" + window.location.port;
 
 var ws_status = new WebSocket(host+"/status");
 var ws_control = new WebSocket(host+"/control");

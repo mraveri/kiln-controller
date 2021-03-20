@@ -11,3 +11,4 @@ scipy
 pyngrok
 flask
 waitress
+requests

@@ -13,7 +13,7 @@ cd ..
 # install python:
 echo 'Initial install'
 sudo apt-get install build-essential python3-pip python3-dev python3-virtualenv libevent-dev virtualenv -y
-sudo apt-get install git scons swig -y
+sudo apt-get install git scons swig openssh-server -y
 
 # install numpy and matplotlib:
 sudo apt-get install libblas-dev liblapack-dev libatlas3-base -y
@@ -46,10 +46,22 @@ pip install -r requirements.txt
 pip install rpi_ws281x adafruit-circuitpython-neopixel
 pip install Adafruit-Blinka
 
-# blacklist
-
 # create the credential file:
 touch mail_credentials.txt
 touch log_credentials.txt
 chmod 600 log_credentials.txt mail_credentials.txt
 sudo chown root:root log_credentials.txt mail_credentials.txt
+
+# create SSL certificate for encrypted connection:
+openssl req -sha256 -x509 \
+        -newkey rsa:4096 -nodes  -days 3650 \
+        -subj "/C=US/ST=./L=. /O=yourkiln/OU=yourkiln/CN=.../emailAddress=..." \
+        -keyout kiln-monitor.key -out kiln-monitor.crt
+
+
+
+
+
+
+
+#

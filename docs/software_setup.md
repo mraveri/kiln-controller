@@ -159,6 +159,9 @@ These are not encrypted but should not be accessible from anybody that does
 not have access to the physical pi and your computer...
 
 Go to ngrok. Register and authenticate.
+Autenticate root with:
+
+    sudo /home/pi/kiln-controller/venv/bin/ngrok authtoken ...
 
 Then reboot the pi.
 
